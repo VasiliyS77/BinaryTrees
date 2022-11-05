@@ -91,15 +91,135 @@ class Tree:
             else:
                 self.__insert_item__(node.right, new_node)
 
+    def delete(self, value) -> None:
+        """Удаление значения из дерева"""
+        pass
+
+    def __delete_item__(self, root: Node, value):
+        """Удаление значения из дерева
+        (рекурсивная функция)"""
+
+        if root.value == value:
+            # Если у элемента только один дочерний узел или таковых вообще нет
+            if root.left is None:
+                temp = root.right
+                root = None
+                return temp
+            elif root.right is None:
+                temp = root.left
+                root = None
+                return temp
+
+            # У узла имеется два дочерних узла
+
+    def tree_view(self):
+        """Визуализация дерева"""
+        # Ширина позиции под число
+        position_width = 6
+
+        # Создание ступенчатого списка
+        view = []
+        view.append([self.root])
+        level = 0
+        while True:
+             level_view: list[Node] = []
+             for it in view[level]:
+                 if it is None:
+                     level_view.append(None)
+                     level_view.append(None)
+                 else:
+                     level_view.append(it.left)
+                     level_view.append(it.right)
+             if not any(level_view):
+                 break
+             else:
+                 view.append(level_view)
+                 level += 1
+
+        # Текстовая визуализация дерева
+        tree_text_view = ""
+        # Ширина "основания" дерева
+        tree_width = len(view[-1])
+        # Ширина строки
+        line_width = position_width * tree_width
+        #
+        # empty_pos = ' ' * position_width
+
+        for line in view:
+            line_str = ''
+            # Ширина позиции исходя из уровня дерева
+            curren_line_pos_width = int(line_width / len(line))
+            for it in line:
+                if it is None:
+                    # Добавляется 'пустая' позиция
+                    line_str += ' ' * curren_line_pos_width
+                else:
+                    # Добавляется позиция с числом (отцентрованным по текущей позиции)
+                    value_in_pos = self.__centre__(curren_line_pos_width, position_width, it.value)
+                    line_str += value_in_pos
+            tree_text_view += line_str
+            # Если строка не последняя добавляются 'графы'
+            if len(line) < tree_width:
+                tree_text_view += '\n'
+                line_str = self.__graph_str__(curren_line_pos_width, position_width)
+                tree_text_view += line_str * len(line) + '\n'
+
+        return tree_text_view
+
+    def __centre__(self, str_len: int, pos_width: int, value) -> str:
+        """Возвращает отцентрованную строку
+        str_len - ширина строки
+        pos_width - ширина позиции под число
+        value отображаемое значение"""
+
+        # Число в строковом формате
+        value_str = str(value)
+        # Ширина отступа
+        if len(value_str) < pos_width:
+            indent_width = int((str_len - len(value_str)) / 2)
+        else:
+            indent_width = int((str_len - pos_width) / 2)
+        # Отступ
+        indent = ' ' * indent_width
+        # Результирующая строка
+        output_line = indent + str(value) + indent
+        return output_line
+
+    def __graph_str__(self, str_len: int, pos_width: int) -> str:
+        """Возвращает строку с 'графами'  /\
+        str_len: ширина строки
+        pos_width: ширина позиции под число"""
+
+        # Ширина отступа
+        indent_width = int((str_len - pos_width) / 2) - 1
+        # Отступ
+        indent = ' ' * indent_width
+        position = ' ' * pos_width
+        # Результирующая строка
+        output_line = indent + '/' + position + '\\' + indent
+        return output_line
+
 
 tree = Tree()
+
 tree.insert(8)
-tree.insert(7)
 tree.insert(3)
+tree.insert(1)
+tree.insert(6)
 tree.insert(10)
 tree.insert(14)
-tree.insert(6)
-tree.insert(1)
+tree.insert(7)
 tree.insert(4)
 print(tree.inorder())
-print(tree.search(1))
+list_v = tree.tree_view()
+print(list_v)
+
+# print(tree.__centre__(16, 4, 9))
+# print(tree.__graph_str__(16, 4))
+
+
+#         8
+#        / \
+#       4   9
+#      / \
+#     3   6
