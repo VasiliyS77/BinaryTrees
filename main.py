@@ -12,6 +12,29 @@ class Tree:
         self.root = None
         self.tree_to_list = []
 
+    def search(self, value) -> bool:
+        """Поиск значения в дереве"""
+        search_result = self.__search__(self.root, value)
+        return False if search_result is None else True
+
+    def __search__(self, root: Node, value):
+        """Поиск значения в дереве
+        (рекурсивная функция)"""
+        if root.value == value:
+            return value
+
+        if value < root.value:
+            if root.left is None:
+                return None
+            else:
+                return self.__search__(root.left, value)
+        else:
+            if root.right is None:
+                return None
+            else:
+                return self.__search__(root.right, value)
+
+
     def inorder(self) -> list:
         """Возвращает упорядоченный список как результат обхода дерева"""
         self.tree_to_list = []
@@ -79,3 +102,4 @@ tree.insert(6)
 tree.insert(1)
 tree.insert(4)
 print(tree.inorder())
+print(tree.search(1))
