@@ -14,8 +14,11 @@ class Tree:
 
     def search(self, value) -> bool:
         """Поиск значения в дереве"""
-        search_result = self.__search__(self.root, value)
-        return False if search_result is None else True
+        if self.root is None:
+            return False
+        else:
+            search_result = self.__search__(self.root, value)
+            return False if search_result is None else True
 
     def __search__(self, root: Node, value):
         """Поиск значения в дереве
@@ -93,13 +96,28 @@ class Tree:
 
     def delete(self, value) -> None:
         """Удаление значения из дерева"""
-        pass
+        if self.root is not None:
+            self.__delete_item__(self.root, value)
+
+    def __min_value_node_(self, root: Node):
+        """Поиск крайнего левого узла (относительно указанного)"""
+        current = root
+        while (current.left is not None):
+            current = current.left
+        return current
 
     def __delete_item__(self, root: Node, value):
         """Удаление значения из дерева
         (рекурсивная функция)"""
+        # Возвращаем, если поддерево пустое
+        if root is None:
+            return None
 
-        if root.value == value:
+        if value < root.value:
+            root.left = self.__delete_item__(root.left, value)
+        elif value > root.value:
+            root.right = self.__delete_item__(root.right, value)
+        else:
             # Если у элемента только один дочерний узел или таковых вообще нет
             if root.left is None:
                 temp = root.right
@@ -110,7 +128,15 @@ class Tree:
                 root = None
                 return temp
 
-            # У узла имеется два дочерних узла
+            # Если у узла два дочерних узла,
+            # помещаем центрированного преемника
+            # на место узла, который нужно удалить
+            temp = self.__min_value_node_(root.right)
+            root.value = temp.value
+            # Удаляем inorder-преемниа
+            root.right = self.__delete_item__(root.right, temp.value)
+
+        return root
 
     def tree_view(self):
         """Визуализация дерева"""
@@ -210,7 +236,13 @@ tree.insert(10)
 tree.insert(14)
 tree.insert(7)
 tree.insert(4)
-print(tree.inorder())
+
+list_v = tree.tree_view()
+print(list_v)
+print()
+print()
+
+tree.delete(3)
 list_v = tree.tree_view()
 print(list_v)
 
